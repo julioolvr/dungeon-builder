@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "start": "serve src",
+    "precommit": "lint-staged",
+    "lint": "eslint src/**/*.js"
+  },
+  "lint-staged": {
+    "src/**/*.{js,json,css}": ["prettier-eslint --write", "git add"]
+  },
+  "devDependencies": {
+    "eslint": "^4.8.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.2.3",
+    "prettier": "^1.7.4",
+    "prettier-eslint": "^8.2.0",
+    "prettier-eslint-cli": "^4.4.0",
+    "serve": "^6.2.0"
+  }
+}
