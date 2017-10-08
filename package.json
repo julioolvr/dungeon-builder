@@ -3,14 +3,11 @@
     "start": "webpack-dev-server --open",
     "precommit": "lint-staged",
     "lint": "eslint src/**/*.js",
-    "deploy": "git-directory-deploy --directory src/",
+    "deploy": "npm run build && git-directory-deploy --directory dist/",
     "build": "webpack"
   },
   "lint-staged": {
-    "src/**/*.{js,json,css}": [
-      "prettier-eslint --write",
-      "git add"
-    ]
+    "src/**/*.{js,json,css}": ["prettier-eslint --write", "git add"]
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.17",
