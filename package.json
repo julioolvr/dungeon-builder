@@ -1,13 +1,16 @@
 {
   "scripts": {
-    "start": "serve src",
+    "start": "webpack-dev-server --open",
     "precommit": "lint-staged",
     "lint": "eslint src/**/*.js",
     "deploy": "git-directory-deploy --directory src/",
     "build": "webpack"
   },
   "lint-staged": {
-    "src/**/*.{js,json,css}": ["prettier-eslint --write", "git add"]
+    "src/**/*.{js,json,css}": [
+      "prettier-eslint --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.17",
@@ -20,7 +23,7 @@
     "prettier": "^1.7.4",
     "prettier-eslint": "^8.2.0",
     "prettier-eslint-cli": "^4.4.0",
-    "serve": "^6.2.0",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
   }
 }
