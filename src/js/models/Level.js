@@ -1,6 +1,14 @@
 const FAKE_LEVEL = {
   playerPosition: { x: 120, y: 20 },
-  flagPosition: { x: 600, y: 600 - 32 }
+  flagPosition: { x: 600, y: 600 - 32 },
+  blocks: [
+    { x: 0, y: 0, frame: 0 },
+    { x: 1, y: 0, frame: 8 },
+    { x: 2, y: 2, frame: 12 },
+    { x: 3, y: 1, frame: 4 },
+    { x: 4, y: 0, frame: 7 },
+    { x: 5, y: 0, frame: 9 }
+  ]
 };
 
 class Level {

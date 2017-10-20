@@ -8,6 +8,12 @@ import {
   name as flagImageName,
   path as flagImagePath
 } from '../assets/images/flag';
+import {
+  name as blocksSpritesheetName,
+  path as blocksSpritesheet,
+  width as blocksSpritesheetWidth,
+  height as blocksSpritesheetHeight
+} from '../assets/spritesheets/blocks';
 
 class PlayState extends Phaser.State {
   preload() {
@@ -16,6 +22,12 @@ class PlayState extends Phaser.State {
     // TODO: Probably some sort of assets pack would be useful here
     this.game.load.image(characterImageName, characterImagePath);
     this.game.load.image(flagImageName, flagImagePath);
+    this.game.load.spritesheet(
+      blocksSpritesheetName,
+      blocksSpritesheet,
+      blocksSpritesheetHeight,
+      blocksSpritesheetWidth
+    );
   }
 
   create() {
@@ -34,6 +46,23 @@ class PlayState extends Phaser.State {
       characterImageName
     );
 
+    this.platforms = this.game.add.group();
+    this.platforms.enableBody = true;
+
+    // TODO: Think about the best way to store the data for the different
+    // block types, sprites to use for each, positioning (e.g. pixel vs
+    // index in a grid of a fixed size), etc
+    this.level.blocks.forEach(blockData => {
+      const groundBlock = this.platforms.create(
+        blockData.x * blocksSpritesheetHeight,
+        this.game.world.height - blocksSpritesheetHeight * (blockData.y + 1),
+        blocksSpritesheetName,
+        blockData.frame
+      );
+
+      groundBlock.body.immovable = true;
+    });
+
     this.game.physics.enable(this.player);
     this.game.physics.enable(this.flag);
 
@@ -44,13 +73,18 @@ class PlayState extends Phaser.State {
   update() {
     this.player.body.velocity.x = 0;
 
+    this.game.physics.arcade.collide(this.player, this.platforms);
+
     if (this.cursors.left.isDown) {
       this.player.body.velocity.x = -config.playerSpeed;
     } else if (this.cursors.right.isDown) {
       this.player.body.velocity.x = config.playerSpeed;
     }
 
-    if (this.cursors.up.isDown && this.player.body.onFloor()) {
+    if (
+      this.cursors.up.isDown &&
+      (this.player.body.onFloor() || this.player.body.touching.down)
+    ) {
       this.player.body.velocity.y = -config.playerJumpVelocity;
     }
 
@@ -64,7 +98,6 @@ class PlayState extends Phaser.State {
   }
 
   finishLevel() {
-    console.log('Finished!');
     this.flag.kill();
   }
 }
