@@ -13,6 +13,14 @@ module.exports = {
   devServer: {
     contentBase: './dist'
   },
+  module: {
+    rules: [
+      {
+        test: /\.png$/,
+        use: [{ loader: 'file-loader' }]
+      }
+    ]
+  },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new CopyWebpackPlugin([{ from: 'src/lib/phaser.js' }]),

@@ -1,0 +1,5 @@
+{
+  "gravity": 2000,
+  "playerSpeed": 350,
+  "playerJumpVelocity": 650
+}
