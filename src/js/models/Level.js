@@ -1,3 +1,5 @@
+// @flow
+
 const FAKE_LEVEL = {
   playerPosition: { x: 120, y: 20 },
   flagPosition: { x: 600, y: 600 - 32 },

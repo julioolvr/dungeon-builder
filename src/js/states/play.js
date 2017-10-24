@@ -1,3 +1,5 @@
+// @flow
+
 import config from '../config.json';
 import Level from '../models/Level';
 import {
