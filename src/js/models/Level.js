@@ -8,7 +8,8 @@ const FAKE_LEVEL = {
     { x: 3, y: 1, frame: 4 },
     { x: 4, y: 0, frame: 7 },
     { x: 5, y: 0, frame: 9 }
-  ]
+  ],
+  spikes: [{ x: 15, y: 0 }]
 };
 
 class Level {

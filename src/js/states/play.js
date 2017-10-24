@@ -9,6 +9,10 @@ import {
   path as flagImagePath
 } from '../assets/images/flag';
 import {
+  name as spikeImageName,
+  path as spikeImagePath
+} from '../assets/images/spike';
+import {
   name as blocksSpritesheetName,
   path as blocksSpritesheet,
   width as blocksSpritesheetWidth,
@@ -22,6 +26,7 @@ class PlayState extends Phaser.State {
     // TODO: Probably some sort of assets pack would be useful here
     this.game.load.image(characterImageName, characterImagePath);
     this.game.load.image(flagImageName, flagImagePath);
+    this.game.load.image(spikeImageName, spikeImagePath);
     this.game.load.spritesheet(
       blocksSpritesheetName,
       blocksSpritesheet,
@@ -63,6 +68,19 @@ class PlayState extends Phaser.State {
       groundBlock.body.immovable = true;
     });
 
+    this.perils = this.game.add.group();
+    this.perils.enableBody = true;
+
+    this.level.spikes.forEach(spikeData => {
+      const spikeBlock = this.perils.create(
+        spikeData.x * blocksSpritesheetHeight,
+        this.game.world.height - blocksSpritesheetHeight * (spikeData.y + 1),
+        spikeImageName
+      );
+
+      spikeBlock.body.immovable = true;
+    });
+
     this.game.physics.enable(this.player);
     this.game.physics.enable(this.flag);
 
@@ -72,6 +90,14 @@ class PlayState extends Phaser.State {
 
   update() {
     this.player.body.velocity.x = 0;
+
+    this.game.physics.arcade.overlap(
+      this.player,
+      this.perils,
+      player => player.kill(),
+      null,
+      this
+    );
 
     this.game.physics.arcade.collide(this.player, this.platforms);
 
