@@ -1,4 +1,6 @@
 {
+  "parser": "babel-eslint",
+  "plugins": ["flowtype"],
   "env": {
     "browser": true,
     "node": true,
@@ -12,7 +14,8 @@
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "flowtype/use-flow-type": 1
   },
   "parserOptions": {
     "sourceType": "module"

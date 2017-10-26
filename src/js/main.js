@@ -1,3 +1,5 @@
+// @flow
+
 import MenuState from './states/menu';
 import PlayState from './states/play';
 

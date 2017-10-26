@@ -1,3 +1,5 @@
+// @flow
+
 class MenuState extends Phaser.State {
   create() {
     const style = { font: '65px Arial', fill: '#ff0044', align: 'center' };

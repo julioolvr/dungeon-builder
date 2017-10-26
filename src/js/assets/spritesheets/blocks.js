@@ -1,3 +1,5 @@
+// @flow
+
 import imagePath from './blocks.png';
 
 export const name = 'BLOCKS';

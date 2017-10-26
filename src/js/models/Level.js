@@ -1,23 +1,81 @@
-const FAKE_LEVEL = {
-  playerPosition: { x: 120, y: 20 },
-  flagPosition: { x: 600, y: 600 - 32 },
-  blocks: [
-    { x: 0, y: 0, frame: 0 },
-    { x: 1, y: 0, frame: 8 },
-    { x: 2, y: 2, frame: 12 },
-    { x: 3, y: 1, frame: 4 },
-    { x: 4, y: 0, frame: 7 },
-    { x: 5, y: 0, frame: 9 }
-  ]
-};
+// @flow
+import type { LevelData } from './LevelLoader';
+import type { Block } from './Block';
+import Goal from './entities/Goal';
+import Player from './entities/Player';
+import Platform from './entities/blocks/Platform';
+import Spike from './entities/blocks/Spike';
 
 class Level {
-  static load(path) {
-    // TODO: Phaser probably has some sort of loading facility for level data,
-    // just like for assets and the like
-    console.log(`Fake loading ${path}...`);
-    return FAKE_LEVEL;
+  static GRID_SIZE: number;
+
+  data: LevelData;
+  goal: ?Goal;
+  player: ?Player;
+  blocks: ?Array<Block>;
+
+  constructor(data: LevelData) {
+    this.data = data;
+  }
+
+  getGoal(): Goal {
+    if (this.goal) {
+      return this.goal;
+    }
+
+    // TODO: Extract magic string to a constant
+    const goalData = this.data.entities.find(entity => entity.type === 'Goal');
+
+    if (!goalData) {
+      throw new Error('Goal not found in level');
+    }
+
+    this.goal = new Goal(goalData);
+    return this.goal;
+  }
+
+  getPlayer(): Player {
+    if (this.player) {
+      return this.player;
+    }
+
+    // TODO: Extract magic string to a constant
+    const playerData = this.data.entities.find(
+      entity => entity.type === 'Player'
+    );
+
+    if (!playerData) {
+      throw new Error('Player not found in level');
+    }
+
+    this.player = new Player(playerData);
+    return this.player;
+  }
+
+  getBlocks(): Array<Block> {
+    if (this.blocks) {
+      return this.blocks;
+    }
+
+    this.blocks = this.data.entities
+      .map(data => {
+        if (data.type !== 'Block') {
+          return;
+        }
+
+        switch (data.blockType) {
+        case 'Platform':
+          return new Platform(data);
+        default:
+          return new Spike(data);
+        }
+      })
+      .filter(Boolean);
+
+    return this.blocks;
   }
 }
+
+Level.GRID_SIZE = 32;
 
 export default Level;
