@@ -8,6 +8,8 @@ import Spike from './entities/blocks/Spike';
 
 class Level {
   static GRID_SIZE: number;
+  static HEIGHT: number;
+  static WIDTH: number;
 
   data: LevelData;
   goal: ?Goal;
@@ -77,5 +79,7 @@ class Level {
 }
 
 Level.GRID_SIZE = 32;
+Level.HEIGHT = 20;
+Level.WIDTH = 25;
 
 export default Level;
