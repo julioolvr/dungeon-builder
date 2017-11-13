@@ -3,34 +3,24 @@
 import config from '../config.json';
 import Level from '../models/Level';
 import LevelLoader from '../models/LevelLoader';
-import {
-  name as spikeImageName,
-  path as spikeImagePath
-} from '../assets/images/spike';
-import {
-  name as blocksSpritesheetName,
-  path as blocksSpritesheet
-} from '../assets/spritesheets/blocks';
+import Goal from '../models/entities/Goal';
+import Player from '../models/entities/Player';
+import Platform from '../models/entities/blocks/Platform';
+import Spike from '../models/entities/blocks/Spike';
 
 class PlayState extends Phaser.State {
   level: Level;
 
   preload() {
-    this.level = LevelLoader.load('/some/fake/level/path');
+    this.level = LevelLoader.load('/some/fake/level/path').setState(this);
 
     // TODO: Probably some sort of assets pack would be useful here
-    this.game.load.image(
-      this.level.getPlayer().getImageName(),
-      this.level.getPlayer().getImagePath()
-    );
-    this.game.load.image(
-      this.level.getGoal().getImageName(),
-      this.level.getGoal().getImagePath()
-    );
-    this.game.load.image(spikeImageName, spikeImagePath);
+    this.game.load.image(Player.SPRITE_NAME, Player.SPRITE_PATH);
+    this.game.load.image(Goal.SPRITE_NAME, Goal.SPRITE_PATH);
+    this.game.load.image(Spike.SPRITE_NAME, Spike.SPRITE_PATH);
     this.game.load.spritesheet(
-      blocksSpritesheetName,
-      blocksSpritesheet,
+      Platform.SPRITE_NAME,
+      Platform.SPRITE_PATH,
       Level.GRID_SIZE,
       Level.GRID_SIZE
     );
@@ -40,55 +30,21 @@ class PlayState extends Phaser.State {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
-    this.flag = this.game.add.sprite(
-      this.level.getGoal().position.x,
-      this.level.getGoal().position.y,
-      this.level.getGoal().getImageName()
-    );
+    this.goal = this.level.getGoal();
+    this.player = this.level.getPlayer();
 
-    this.player = this.game.add.sprite(
-      this.level.getPlayer().position.x,
-      this.level.getPlayer().position.y,
-      this.level.getPlayer().getImageName()
-    );
+    this.world.add(this.goal);
+    this.world.add(this.player);
 
     this.platforms = this.game.add.group();
-    this.platforms.enableBody = true;
-    this.perils = this.game.add.group();
-    this.perils.enableBody = true;
-
-    // TODO: Think about the best way to store the data for the different
-    // block types, sprites to use for each, positioning (e.g. pixel vs
-    // index in a grid of a fixed size), etc
-    this.level.getBlocks().forEach(block => {
-      const group = block.isSolid() ? this.platforms : this.perils;
-      const blockSprite = group.create(
-        block.position.x * Level.GRID_SIZE,
-        this.game.world.height - Level.GRID_SIZE * (block.position.y + 1),
-        block.getImageName(),
-        0 // TODO: Think of a way to parameterize the frame to use
-      );
-
-      blockSprite.body.immovable = true;
-    });
-
-    this.game.physics.enable(this.player);
-    this.game.physics.enable(this.flag);
-
-    this.player.body.gravity.y = config.gravity;
-    this.player.body.collideWorldBounds = true;
+    // TODO: not all blocks are platforms (e.g. spikes)
+    this.level.getBlocks().forEach(block => this.platforms.add(block));
   }
 
   update() {
     this.player.body.velocity.x = 0;
-    this.game.physics.arcade.overlap(
-      this.player,
-      this.perils,
-      player => player.kill(),
-      null,
-      this
-    );
     this.game.physics.arcade.collide(this.player, this.platforms);
+
     if (this.cursors.left.isDown) {
       this.player.body.velocity.x = -config.playerSpeed;
     } else if (this.cursors.right.isDown) {
@@ -104,7 +60,7 @@ class PlayState extends Phaser.State {
 
     this.game.physics.arcade.overlap(
       this.player,
-      this.flag,
+      this.goal,
       this.finishLevel,
       null,
       this
@@ -112,7 +68,7 @@ class PlayState extends Phaser.State {
   }
 
   finishLevel() {
-    this.flag.kill();
+    this.goal.kill();
   }
 }
 

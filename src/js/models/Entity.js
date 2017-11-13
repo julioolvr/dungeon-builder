@@ -1,12 +1,11 @@
 // @flow
 
-export type Coordinates = {
-  x: number,
-  y: number
-};
+import type { Component } from './Component';
 
-export interface Entity {
-  position: Coordinates;
-  getImageName(): string;
-  getImagePath(): string;
+class Entity extends Phaser.Sprite {
+  addComponent(component: Component) {
+    component.onAdd(this);
+  }
 }
+
+export default Entity;
