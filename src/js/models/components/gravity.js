@@ -13,6 +13,8 @@ class GravityComponent implements Component {
   onAdd(entity: Entity) {
     entity.body.gravity.y = this.gravity;
   }
+
+  update() {}
 }
 
 export default GravityComponent;

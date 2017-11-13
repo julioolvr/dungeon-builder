@@ -7,6 +7,8 @@ class ImmovableComponent implements Component {
   onAdd(entity: Entity) {
     entity.body.immovable = true;
   }
+
+  update() {}
 }
 
 export default ImmovableComponent;

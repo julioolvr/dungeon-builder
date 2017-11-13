@@ -13,6 +13,8 @@ class PhysicsComponent implements Component {
   onAdd(entity: Entity) {
     this.game.physics.enable(entity);
   }
+
+  update() {}
 }
 
 export default PhysicsComponent;

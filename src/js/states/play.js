@@ -1,12 +1,12 @@
 // @flow
 
-import config from '../config.json';
 import Level from '../models/Level';
 import LevelLoader from '../models/LevelLoader';
 import Goal from '../models/entities/Goal';
 import Player from '../models/entities/Player';
 import Platform from '../models/entities/blocks/Platform';
 import Spike from '../models/entities/blocks/Spike';
+import { OnOverlapWith, CollideWith } from '../models/components';
 
 class PlayState extends Phaser.State {
   level: Level;
@@ -28,43 +28,36 @@ class PlayState extends Phaser.State {
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.cursors = this.game.input.keyboard.createCursorKeys();
 
     this.goal = this.level.getGoal();
     this.player = this.level.getPlayer();
+
+    this.goal.addComponent(
+      new OnOverlapWith(this.game, this.player, () => this.finishLevel())
+    );
 
     this.world.add(this.goal);
     this.world.add(this.player);
 
     this.platforms = this.game.add.group();
-    // TODO: not all blocks are platforms (e.g. spikes)
-    this.level.getBlocks().forEach(block => this.platforms.add(block));
+    this.level.getPlatforms().forEach(platform => this.platforms.add(platform));
+    this.player.addComponent(new CollideWith(this.game, this.platforms));
+
+    this.spikes = this.game.add.group();
+    this.spikes.enableBody = true;
+    this.level.getSpikes().forEach(spike => this.spikes.add(spike));
+    this.player.addComponent(
+      new OnOverlapWith(this.game, this.spikes, () => this.player.kill())
+    );
   }
 
   update() {
-    this.player.body.velocity.x = 0;
-    this.game.physics.arcade.collide(this.player, this.platforms);
-
-    if (this.cursors.left.isDown) {
-      this.player.body.velocity.x = -config.playerSpeed;
-    } else if (this.cursors.right.isDown) {
-      this.player.body.velocity.x = config.playerSpeed;
-    }
-
-    if (
-      this.cursors.up.isDown &&
-      (this.player.body.onFloor() || this.player.body.touching.down)
-    ) {
-      this.player.body.velocity.y = -config.playerJumpVelocity;
-    }
-
-    this.game.physics.arcade.overlap(
-      this.player,
-      this.goal,
-      this.finishLevel,
-      null,
-      this
-    );
+    // We might need to review how much knowledge of the specific entities
+    // that exist should be on this state
+    this.player.update();
+    this.goal.update();
+    this.platforms.forEach(platform => platform.update());
+    this.spikes.forEach(spike => spike.update());
   }
 
   finishLevel() {

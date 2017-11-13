@@ -7,6 +7,8 @@ class WorldCollideComponent implements Component {
   onAdd(entity: Entity) {
     entity.body.collideWorldBounds = true;
   }
+
+  update() {}
 }
 
 export default WorldCollideComponent;

@@ -6,7 +6,7 @@ import {
 } from '../../assets/images/character';
 import config from '../../config.json';
 import Entity from '../Entity';
-import { Physics, Gravity, WorldCollide } from '../components';
+import { Physics, Gravity, WorldCollide, UserControlled } from '../components';
 
 class Player extends Entity {
   constructor(game: Phaser.Game, x: number, y: number) {
@@ -15,6 +15,9 @@ class Player extends Entity {
     this.addComponent(new Physics(game));
     this.addComponent(new Gravity(config.gravity));
     this.addComponent(new WorldCollide());
+    this.addComponent(
+      new UserControlled(game, config.playerSpeed, config.playerJumpVelocity)
+    );
   }
 }
 

@@ -13,7 +13,8 @@ class Level {
   data: LevelData;
   goal: ?Goal;
   player: ?Player;
-  blocks: ?Array<Platform | Spike>;
+  platforms: ?Array<Platform>;
+  spikes: ?Array<Platform>;
   state: ?Phaser.State;
 
   constructor(data: LevelData) {
@@ -71,18 +72,12 @@ class Level {
     return this.player;
   }
 
-  getBlocks(): Array<Platform | Spike> {
-    if (this.blocks) {
-      return this.blocks;
+  getPlatforms(): Array<Platform> {
+    if (this.platforms) {
+      return this.platforms;
     }
 
-    this.blocks = this.getPlatforms().concat(this.getSpikes());
-
-    return this.blocks;
-  }
-
-  getPlatforms(): Array<Platform> {
-    return this.data.entities
+    this.platforms = this.data.entities
       .filter(data => data.type === 'Block' && data.blockType === 'Platform')
       .map(data => {
         if (!this.state) {
@@ -98,10 +93,16 @@ class Level {
           this.state.game.world.height - Level.GRID_SIZE * (data.position.y + 1)
         );
       });
+
+    return this.platforms;
   }
 
   getSpikes(): Array<Spike> {
-    return this.data.entities
+    if (this.spikes) {
+      return this.spikes;
+    }
+
+    this.spikes = this.data.entities
       .filter(data => data.type === 'Block' && data.blockType === 'Spike')
       .map(data => {
         if (!this.state) {
@@ -117,6 +118,8 @@ class Level {
           this.state.game.world.height - Level.GRID_SIZE * (data.position.y + 1)
         );
       });
+
+    return this.spikes;
   }
 
   setState(state: Phaser.State): Level {

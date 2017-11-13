@@ -7,6 +7,8 @@ class SolidComponent implements Component {
   onAdd(entity: Entity) {
     entity.body.enableBody = true;
   }
+
+  update() {}
 }
 
 export default SolidComponent;
