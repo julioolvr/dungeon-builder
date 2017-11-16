@@ -1,6 +1,10 @@
 // @flow
 import Level from './Level';
-import type { Coordinates } from './Entity';
+
+type Coordinates = {
+  x: number,
+  y: number
+};
 
 type BlockType = 'Platform' | 'Spike';
 
@@ -58,7 +62,7 @@ class LevelLoader {
   static load(path: string): Level {
     // TODO: Phaser probably has some sort of loading facility for level data,
     // just like for assets and the like
-    console.log(`Fake loading ${path}...`);
+    console.log(`Fake loading ${path}...`); // eslint-disable-line no-console
     return new Level(FAKE_LEVEL);
   }
 }
